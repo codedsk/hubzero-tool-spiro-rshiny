@@ -1,4 +1,6 @@
 library(shiny)
+library(ggplot2)
+library(plotly)
 
 spiro <- function(n1,n2,n3) {
   t <- seq(0,1,length.out=1000)
@@ -7,28 +9,38 @@ spiro <- function(n1,n2,n3) {
   return (result)
 }
 
-# Define UI for application that draws a histogram
+# Define UI for application that draws a spirograph
 ui <- fluidPage(
 
-   # Application title
-   titlePanel("Spirograph"),
+  # Application title
+  titlePanel("Spirograph"),
 
-   # input sliders
-   sliderInput(inputId="n1",label="n1",value=13,min=-10,max=20,step=1),
-   sliderInput(inputId="n2",label="n2",value=-7,min=-10,max=20,step=1),
-   sliderInput(inputId="n3",label="n3",value=-3,min=-10,max=20,step=1),
+  sidebarLayout(
 
-   # output plot
-   plotOutput("spirograph")
+    sidebarPanel(
+      # input sliders
+      sliderInput(inputId="n1",label="n1",value=13,min=-10,max=20,step=1),
+      sliderInput(inputId="n2",label="n2",value=-7,min=-10,max=20,step=1),
+      sliderInput(inputId="n3",label="n3",value=-3,min=-10,max=20,step=1)
+    ),
+
+    mainPanel(
+      # output plot
+      plotlyOutput("spirograph")
+    )
+  )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic required to draw a spirograph
 server <- function(input, output) {
-  output$spirograph <- renderPlot({
+  output$spirograph <- renderPlotly({
     result <- spiro(input$n1,input$n2,input$n3)
-    plot(result,type="l")
+    ggplot(data=result,aes(x=x,y=y)) +
+        geom_path() +
+        xlab("Real(z)") +
+        ylab("Imag(z)")
   })
 }
 
 # Run the application
-shinyApp(ui = ui, server = server)
+shinyApp(ui,server)
