@@ -2,6 +2,12 @@ library(shiny)
 library(ggplot2)
 library(plotly)
 
+# Stop R from making temp pdf files
+pdf(NULL)
+
+# Start the PNG device
+options(bitmapType='cairo')
+
 spiro <- function(n1,n2,n3) {
   t <- seq(0,1,length.out=1000)
   z <- exp(1i*2*pi*n1*t) + exp(1i*2*pi*n2*t) + exp(1i*2*pi*n3*t)
